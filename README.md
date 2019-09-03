@@ -1,6 +1,8 @@
 # DM Lite
 Web browser data modeler
 
+![Screenshot](https://github.com/pj1985/dm_lite/blob/master/screen.png "Data Modeler Lite")
+
 # Support
 Support available via GitHub Issues. 
 
