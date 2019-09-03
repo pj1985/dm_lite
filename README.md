@@ -39,7 +39,7 @@ Copyright 2019 pj1985
 
 This project is licensed under the GPL http://www.gnu.org/licenses/gpl.txt
 
-## DM Lite utilizes via cdnjs:
+#### DM Lite utilizes via cdnjs:
   - vis.js visualization library (https://visjs.org/)
   - Bootstrap 4.3 (https://bootstrap.build/)
   - Font Awesome 4.3 (https://fontawesome.com/)
