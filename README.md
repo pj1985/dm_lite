@@ -2,13 +2,13 @@
 Standalone web browser data modeler. Whole diagram is created only in your browser, no data is stored on server. You can save your work by exporting diagram into file and open later through import diagram function.
 
 ## Main functions of data modeler:
-  - ### Create relational data model (tables and foreign keys)
-  - ### Use logical predefined stereotypes and domain data types for modeling
-  - ### Manage business dictionary with mapping to table columns
-  - ### Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)
-  - ### Record business change log
+  - #### Create relational data model (tables and foreign keys)
+  - #### Use logical predefined stereotypes and domain data types for modeling
+  - #### Manage business dictionary with mapping to table columns
+  - #### Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)
+  - #### Record business change log
 
-You can integrate data modeler with your database (for example with PHP) to create powerfull modeling tool.
+
 
 ![Screenshot](https://github.com/pj1985/dm_lite/blob/master/screen.png "Data Modeler Lite")
 
@@ -26,6 +26,7 @@ You can integrate data modeler with your database (for example with PHP) to crea
 
 - **sql** - database scripts for generating model file
 
+You can integrate data modeler with your database (for example with PHP) to create powerfull modeling tool.
 
 # Support
 Support available via GitHub Issues. 
