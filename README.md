@@ -4,9 +4,9 @@ Standalone web browser data modeler. Whole diagram is created only in your brows
 ## Main functions of data modeler:
   - **Create relational data model (tables and foreign keys)**
   - **Use logical predefined stereotypes and domain data types for modeling**
-  - **Manage business dictionary with mapping to table columns
-  - **Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)
-  - **Record business change log
+  - **Manage business dictionary with mapping to table columns**
+  - **Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)**
+  - **Record business change log**
 
 
 
