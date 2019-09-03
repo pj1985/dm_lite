@@ -1,0 +1,807 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!--
+/**
+ *	Copyright (c) 2019 pj1985 
+ *	
+ *	This code is part of the DM Lite (https://github.com/pj1985/dm_lite)
+ *	
+ *	You can redistribute it and/or modify it under the terms of the GNU General Public License
+ *	as published by the Free Software Foundation, either version 3 of the License, or later.
+ *	
+ *	You should have received a copy of the GNU General Public License along
+ *	with DM Lite.  See http://www.gnu.org/licenses/
+*/
+-->
+<title>Data Modeler Lite</title>
+<style type="text/css">
+   #visualization {
+		position: absolute;
+		width: 100%;
+		height: 94.5%;
+		background-color: #f4f8ff;
+	}
+	
+	#visualization:after {
+	  content: "DM Lite"; 
+	  font-family: Arial;
+	  font-style: normal;
+	  font-weight: normal;
+	  text-decoration: inherit;
+	  position: absolute;
+	  font-size: 30px;
+	  color: #abc9e8;
+	  top: 95%;
+	  left: 1%;
+	  margin: -30px 0 0 20px;
+	  z-index: 1;
+	}
+	
+	#background {
+	   position: absolute;
+	   top: 0;
+	   left: 0;
+	   bottom: 0;
+	   right: 0;
+	   z-index: -1;
+	   overflow: hidden;
+	}
+	
+	.modal-lg {
+		max-width: 70% !important;
+	}
+	
+	.pad-slim{
+		padding-top: 0.025rem;
+		padding-right: 0.05rem;
+		padding-bottom: 0.025rem;
+		padding-left: 0.05rem;
+	}
+
+	#M_AddNode .modal-content
+	{
+		min-height:500px;
+	}
+	.pointer {
+		cursor: pointer;
+	}
+	 .navbar {
+		height: 40px!important;
+		background-color: #f4f8ff;
+		
+		
+	}
+	 
+	/* Tree view CSS */
+	
+	ul, .ul_tree {
+	  list-style-type: none;
+	}
+
+	.ul_tree {
+	  margin: 0;
+	  padding: 0;
+	}
+	
+	.caret {
+	  cursor: pointer;
+	  -webkit-user-select: none; /* Safari 3.1+ */
+	  -moz-user-select: none; /* Firefox 2+ */
+	  -ms-user-select: none; /* IE 10+ */
+	  user-select: none;
+	}
+
+	.caret::before {
+	  content: "\f04b";
+	  font-family: FontAwesome;
+	  
+	  display: inline-block;
+	  margin-right: 6px;
+	}
+
+	.caret-down::before {
+	  -ms-transform: rotate(90deg); /* IE 9 */
+	  -webkit-transform: rotate(90deg); /* Safari */'
+	  transform: rotate(90deg);  
+	}
+
+	.nested {
+	  display: none;
+	}
+
+	.active {
+	  display: block;
+	}
+
+	
+</style>
+<!-- Import vis.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.20.1/vis.min.css" rel="stylesheet" type="text/css" />
+
+<!-- Demo data model -->
+<script src="js/demo_DM.js"></script>
+
+ <!-- Bootstrap 4.3 -->
+<link href="css/boot.css" rel="stylesheet" type="text/css" />
+ 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+ 
+<!-- Highlight -->
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/atom-one-light.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+<script
+ charset="UTF-8"
+ src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/sql.min.js"></script>
+
+ <!-- Font Awesome 4.3 -->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+
+<!-- Data Model Lite js -->
+<script type="text/javascript" src="js/bus_terms.js"></script>
+<script type="text/javascript" src="js/datatypes.js"></script>
+<script type="text/javascript" src="js/stereotypes.js"></script>
+<script type="text/javascript" src="js/constypes.js"></script>
+<script type="text/javascript" src="js/options.js"></script>
+<script type="text/javascript" src="js/dm.js"></script>
+
+<body>
+
+<div id="D_Nav" class="bg-primary">
+	<ul class="nav nav-pills bg-light">
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Model</a>
+			<div class="dropdown-menu">
+			<a class="dropdown-item" href="#" id="GotoImportNetwork">Import and Export</a>
+			<a class="dropdown-item" href="#" id="GotoGroups">Stereotypes</a>
+			<a class="dropdown-item" href="#" id="GotoDataTypes">Data Types</a>
+			<div class="dropdown-divider"></div>
+			<a class="dropdown-item" href="#" id="GotoOptions">Model Options</a>
+			</div>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" href="#" id="GotoBusterms">Business Dictionary</a>
+		</li>
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">View</a>
+			<div class="dropdown-menu">
+			<a class="dropdown-item" href="#" id="GotoFit">Fit</a>
+			<a class="dropdown-item" href="#" id="GotoRedraw">Redraw</a>
+			</div>
+		</li>
+		<li class="nav-item dropdown">
+			<a class="nav-link dropdown-toggle " data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Help</a>
+			<div class="dropdown-menu">
+			<a class="dropdown-item disabled" href="#" id="">Wiki</a>
+			<a class="dropdown-item" href="#" id="GotoAbout">About</a>
+			</div>
+		  </li>
+		</ul> 
+</div>
+<div id="visualization"></div>
+
+<!-- Modal windows -->
+<div class="modal fade " id="M_ImportNetwork" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label for="I_NetworkImport">Data Model:</label>
+					<textarea id="I_NetworkImport"
+						class="form-control"
+						rows="4"
+						cols="50">
+					</textarea>
+					<div id="D_DownloadNetwork"></div>
+				</div>
+				<div class="form-group">
+					<input type="file" class="form-control" id="I_ImportFile"></input>
+				</div>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+			  <button type="button" class="btn btn-light" id="B_ImportLoadDemo">Load Demo</button>
+			  <button type="button" class="btn btn-primary" data-dismiss="modal" id="B_ImportNetwork">Import</button>
+			  <a href="#" class="btn btn-primary" role="button" id="B_ExportNetwork" download="dm.txt" aria-pressed="true">Export</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+ 
+<div class="modal fade " id="M_AddNode" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body ">
+				<ul class="nav nav-tabs" id="U_NodeTabList" role="tablist">
+				  <li class="nav-item">
+					<a class="nav-link active" id="A_NodeTabList_General" data-toggle="tab" href="#D_NodeTabList_General" role="tab" aria-controls="D_NodeTabList_General" aria-selected="true">General</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="A_NodeTabList_Constraint" data-toggle="tab" href="#D_NodeTabList_Constraint" role="tab" aria-controls="D_NodeTabList_Constraint" aria-selected="true">Constraints/Indexes</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="A_NodeTabList_Advanced" data-toggle="tab" href="#D_NodeTabList_Advanced" role="tab" aria-controls="D_NodeTabList_Advanced" aria-selected="false">Advanced</a>
+				  </li>
+				  <li class="nav-item">
+					<a class="nav-link" id="A_NodeTabList_Changelog" data-toggle="tab" href="#D_NodeTabList_Changelog" role="tab" aria-controls="D_NodeTabList_Changelog" aria-selected="false">Changelog</a>
+				  </li>
+				</ul>
+				<div class="tab-content" id="myTabContent">
+					<div class="tab-pane fade show active" id="D_NodeTabList_General" role="tabpanel" aria-labelledby="A_NodeTabList_General">
+						<p></p>
+						<div class="form-group">
+							<input type="text" class="form-control" readonly id="I_AddNodeId" data-toggle="tooltip" title="Table UID">
+						</div>
+						<div class="form-group">
+							<label for="I_AddNodeType">Stereotype:</label>
+							<select class="form-control" id="I_AddNodeType" data-toggle="tooltip" title="Table stereotype">
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="I_AddNodeName">Name:</label>
+							<input type="text" class="form-control" id="I_AddNodeName" data-toggle="tooltip" title="Table name">
+						</div>
+						<div class="collapse show"   id="D_NodeExtBasic">
+							<div class="card card-body" id="D_columns">
+							</div>
+						</div>
+					 
+						<div class="form-group">
+							<label for="I_AddNodeDesc">Description:</label>
+							 <textarea class="form-control" rows="5" id="I_AddNodeDesc" data-toggle="tooltip" title="Table description"></textarea>
+						</div>
+					</div>
+					<div class="tab-pane fade" id="D_NodeTabList_Constraint" role="tabpanel" aria-labelledby="A_NodeTabList_Constraint">
+					<p></p>
+						<div id="D_NodeCons"></div>
+						 
+					</div>
+					<div class="tab-pane fade" id="D_NodeTabList_Advanced" role="tabpanel" aria-labelledby="A_NodeTabList_Advanced">
+						<p></p>
+						<div class="form-row">
+						<div class="form-group col-md-6">
+							<fieldset><legend>Data Circulation</legend>
+							<div class="form-group">
+								<label for="I_Inserts_Weekly">Inserts Weekly</label>
+								<select type="text" class="form-control" id="I_Inserts_Weekly" data-toggle="tooltip" title="Average number of inserts in table">
+									<option value="">...</option>
+									<option value="0">0</option>
+									<option value="10">up to 10</option>
+									<option value="100">up to 100</option>
+									<option value="1000">up to 1000</option>
+									<option value="10000">up to 10000</option>
+									<option value="100000">up to 100000</option>
+									<option value="-1">more than 100000</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="I_Updates_Weekly">Updates Weekly</label>
+								<select type="text" class="form-control" id="I_Updates_Weekly" data-toggle="tooltip" title="Average number of updated rows in table">
+									<option value="">...</option>
+									<option value="0">0</option>
+									<option value="10">up to 10</option>
+									<option value="100">up to 100</option>
+									<option value="1000">up to 1000</option>
+									<option value="10000">up to 10000</option>
+									<option value="100000">up to 100000</option>
+									<option value="-1">more than 100000</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label for="I_Deletes_Weekly">Deletes Weekly</label>
+								<select type="text" class="form-control" id="I_Deletes_Weekly" data-toggle="tooltip" title="Average number deleted rows from table">
+									<option value="">...</option>
+									<option value="0">0</option>
+									<option value="10">up to 10</option>
+									<option value="100">up to 100</option>
+									<option value="1000">up to 1000</option>
+									<option value="10000">up to 10000</option>
+									<option value="100000">up to 100000</option>
+									<option value="-1">more than 100000</option>
+								</select>
+							</div>
+							</fieldset>
+							<fieldset><legend>Data Definition</legend>
+							<div class="form-group">
+									<label for="I_Data_Sensitivity">Data Sensitivity</label>
+									<select type="text" class="form-control" id="I_Data_Sensitivity" data-toggle="tooltip" title="Data sensitivity categorization">
+										<option value="">...</option>
+										<option value="1">Trivial - Public data with no sensitivity</option>
+										<option value="2">Low - Business related public data</option>
+										<option value="3">Moderate - Business and intellectual properties</option>
+										<option value="4">High - All customer related data </option>
+										<option value="5">Top Secret - Information protected by contract, statute or regulation</option>								
+									</select>
+								</div>
+								<div class="form-group">
+									<label for="I_Data_Protection">Data Protection</label>
+									<select type="text" class="form-control" id="I_Data_Protection" data-toggle="tooltip" title="Level of protection against data changes">
+										<option value="">...</option>
+										<option value="1">None - No data protection. Data can be lost.</option>
+										<option value="2">Low - Only standard database backup to prevent data loss.</option>
+										<option value="3">Moderate - Data should be in mirrored storage to prevent loss.</option>
+										<option value="4">High - All changes are recorded and audited.</option>
+									</select>
+								</div>
+							</fieldset>
+						</div>
+						<div class="form-group col-md-6">
+							<fieldset><legend>Data Ownership</legend>
+							<div class="form-group">
+								<label for="I_Business_Owner">Business Owner</label>
+								<input type="text" class="form-control" id="I_Business_Owner" data-toggle="tooltip" title="Business owner of data">
+							</div>
+							<div class="form-group">
+								<label for="I_Technical_Owner">Technical Owner</label>
+								<input type="text" class="form-control" id="I_Technical_Owner" data-toggle="tooltip" title="Technical owner of data">
+							</div>
+							<div class="form-group">
+								<label for="I_Data_Origin">Data Origin</label>
+								<input type="text" class="form-control" id="I_Data_Origin" data-toggle="tooltip" title="System or application of data origination">
+							</div>
+							</fieldset>
+						</div>
+					</div>
+					</div>
+					<div class="tab-pane fade" id="D_NodeTabList_Changelog" role="tabpanel" aria-labelledby="A_NodeTabList_Changelog">
+					<p></p>
+					<div id="D_NodeChglog"></div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn btn-primary" id="B_AddNodeSave" data-dismiss="modal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_AddEdge" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<input type="hidden" class="form-control" id="I_AddEdgeId">
+				</div>
+				<div class="form-group">
+					<label for="I_AddEdgeName">Column:</label>
+					<input type="text" class="form-control" id="I_AddEdgeName" disabled>
+				</div>
+			 	<div class="form-group d-none">
+					<label for="I_AddEdgeColor">Color:</label>
+					<select class=" form-control" id="I_AddEdgeColor">
+						<option value="red">red</option>
+						<option value="blue">blue</option>
+						<option value="green">green</option>				 
+					</select>
+				</div>
+				<div class="form-group">
+					<label for="I_AddEdgeDesc">Comment:</label>
+					<textarea class="form-control" rows="5" id="I_AddEdgeDesc"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn btn-primary" id="B_AddEdgeSave" data-dismiss="modal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_Groups" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body " id="D_GroupsTable">				 
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>				
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_ConsColumns" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<input type="hidden" id="I_ConsColumns"></input>
+			<div class="modal-body " id="D_ConsColumns">				 
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn btn-primary" id="B_SaveConsColumns" data-dismiss="modal">Save</button>				
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_GroupsIcon" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<input type="hidden" id="I_GroupIconName"></input>
+			<div class="modal-body" id="D_GroupsIcons">
+			 
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>				
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_BusTerms" role="dialog">
+	<div class="modal-dialog modal-dialog-centered ">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body" id="D_BusTermsTree">				 
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>		
+				<button type="button" class="btn btn btn-primary" id="B_BusTermNew" >New</button>				
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade " id="M_Views" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<input type="hidden" class="form-control" id="I_View" value="Logical View">
+			<div class="modal-body btn-group btn-group-sm d-flex justify-content-center" id="D_Views">				 
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>										
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_AdvColumn" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">Column Data Expectation 
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<input type="hidden" class="form-control" id="I_AdvColumn_Id" value="">
+			<div class="modal-body btn-group btn-group-sm d-flex justify-content-center" id="D_AdvColumn">	
+				<div class="form-group col-md-6">
+					<fieldset><legend>Data Length</legend>
+						<div class="form-group">
+							<label for="I_AdvColumn_MinVal">Min Value<small> (numeric or date data types)</small></label>
+							<input type="text" class="form-control" id="I_AdvColumn_MinVal" data-toggle="tooltip" title="Minimal value">
+						</div>
+						<div class="form-group">
+							<label for="I_AdvColumn_MaxVal">Max Value<small>  (numeric or date data types)</small></label>
+							<input type="text" class="form-control" id="I_AdvColumn_MaxVal" data-toggle="tooltip" title="Maximum Value">
+						</div>
+						<div class="form-group">
+							<label for="I_AdvColumn_AvgVal">Avg Data Length<small>  (text data types)</small></label>
+							<input type="text" class="form-control" id="I_AdvColumn_AvgVal" data-toggle="tooltip" title="Average expected length of the string">
+						</div>
+					</fieldset></div>
+					<div class="form-group col-md-6">
+					<fieldset><legend>Data Statistics</legend>
+					<div class="form-group">
+						<label for="I_AdvColumn_Common">Common Values<small>  (comma separated)</small></label>
+						<input type="text" class="form-control" id="I_AdvColumn_Common" data-toggle="tooltip" title="Most common values for low cardinality fields">
+					</div>
+					<div class="form-group">
+						<label for="I_AdvColumn_Filled">% of not null<small>  (or not default)</small></label>
+						<select class="form-control" id="I_AdvColumn_Filled" data-toggle="tooltip" title="% of filled values in column">
+							<option value="1">Up to 1%</option>
+							<option value="10">Up to 10%</option>
+							<option value="30">Up to 30%</option>
+							<option value="50">Up to 50%</option>
+							<option value="90">Up to 90%</option>
+							<option value="100">Up to 100%</option>
+						</select>
+					</div>	
+					<div class="form-group">
+						<label for="I_AdvColumn_Mask">Pattern</label>
+						<select class="form-control" id="I_AdvColumn_Mask" data-toggle="tooltip" title="Data Mask">
+							<option value="1">Text:(A-Za-z)+</option>
+							<option value="2">Text:[A-Z](a-z)+</option>
+							<option value="3">Text:(A-Z a-z)+</option>
+							<option value="4">Text:(A-Z a-z0-9)+</option>
+							<option value="5">Text:(0-9)+</option>
+							<option value="6">Text:(0-9)+(.)?(0-9)+</option>
+							<option value="7">Text:(A-Za-z)+@(A-Za-z)+.(a-z){,2}</option>
+							<option value="8">Text:(1-9)(0-9)+</option>
+							<option value="9">Text:[A-Z]+</option>
+							<option value="10">Text:[a-z]+</option>
+							<option value="11">Text:[A-Za-z]</option>
+							<option value="12">Date:DD.MM.YYYY</option>
+							<option value="13">Date:DD.MM.YYYY HH24:MI:SS</option>
+						</select>
+					</div>						
+					</fieldset>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>	
+				<button type="button" class="btn btn btn-primary" id="B_AdvColumn_Save" data-dismiss="modal">Save</button>				
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_ModelMeta" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	 
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body row justify-content-center" id="D_ModelMeta">	
+				<div class="form-group col-md-6">
+					<fieldset><legend>Definition</legend>
+					<div class="form-group">
+							<label for="I_ModelMeta_Name">Model Name</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Name" data-toggle="tooltip" title="Model name">
+					</div>
+					<div class="form-group">
+							<label for="I_ModelMeta_Version">Model Version</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Version" data-toggle="tooltip" title="Actual model version">
+					</div>
+					<div class="form-group">
+						<label for="I_ModelMeta_System">System</label>
+						<input type="text" class="form-control" id="I_ModelMeta_System" data-toggle="tooltip" title="Name of the system">
+					</div>
+					<div class="form-group">
+						<label for="I_ModelMeta_Database">Database</label>
+						<input type="text" class="form-control" id="I_ModelMeta_Database" data-toggle="tooltip" title="Name of the target database">
+					</div>
+					<div class="form-group">
+							<label for="I_ModelMeta_Schema">Target Schema/User</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Schema" data-toggle="tooltip" title="Target database schema or user">
+					</div>
+					<div class="form-group">
+						<label for="I_ModelMeta_Description">Description</label>
+						<textarea class="form-control" rows="5" id="I_ModelMeta_Description" data-toggle="tooltip" title="Name of the target database"></textarea>
+					</div>
+					</fieldset> </div>
+					<div class="form-group col-md-6">
+					<fieldset><legend>Owner</legend>
+						<div class="form-group">
+							<label for="I_ModelMeta_Architect">Architect name</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Architect" data-toggle="tooltip" title="Name of the architect">
+						</div>
+						<div class="form-group">
+							<label for="I_ModelMeta_Business">Business owner</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Business" data-toggle="tooltip" title="Business owner of the database">
+						</div>
+						<div class="form-group">
+							<label for="I_ModelMeta_Project">Project</label>
+							<input type="text" class="form-control" id="I_ModelMeta_Project" data-toggle="tooltip" title="Main project for the database">
+						</div>
+					</fieldset> 
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>	
+				<button type="button" class="btn btn btn-primary" id="B_ModelMeta_Save" data-dismiss="modal">Save</button>				
+			</div>
+		</div>
+	</div>
+</div>
+
+ 
+
+<div class="modal fade " id="M_Default_lg" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body btn-group btn-group-sm d-flex justify-content-center" >
+				<div id="D_Modal_Default_lg">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>										
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="M_Default_sm" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body btn-group btn-group-sm d-flex justify-content-center" >
+				<div id="D_Modal_Default_sm">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>										
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="modal fade " id="M_BusTermEdit" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg">
+	<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+			</div>
+			<div class="modal-body row" id="D_BusTermEdit">		
+				<div class="col-md-6">
+				<fieldset><legend>Business Definition</legend>
+					<div class="form-group">
+						<label for="I_BusTerm">Business Term (ID):</label>
+						<input type="text" class="form-control" id="I_BusTerm" required data-toggle="tooltip" title="(Category.)(Subcategory.)Business term name without white spaces"></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_bus_name">Name:</label>
+						<input type="text" class="form-control" id="I_BusTerm_bus_name" required data-toggle="tooltip" title="Name in business language"></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_short">Short:</label>
+						<input type="text" class="form-control" id="I_BusTerm_short" required data-toggle="tooltip" title="Short version of the name"></input>
+					</div><hr>
+				<fieldset><legend>Business Categorization</legend>
+					<div class="form-group">
+						<label for="I_BusTerm_category">Category:</label>
+						<input type="text" class="form-control" id="I_BusTerm_category" required></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_subcategory">Subcategory:</label>
+						<input type="text" class="form-control" id="I_BusTerm_subcategory" required></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_tags">Tags:</label>
+						<input class="form-control" type="text" id="I_BusTerm_tags"></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_Sensitivity">Data Sensitivity</label>
+						<select type="text" class="form-control" id="I_BusTerm_Sensitivity" data-toggle="tooltip" title="Data sensitivity categorization">
+							<option value="">...</option>
+							<option value="1">Trivial - Public data with no sensitivity</option>
+							<option value="2">Low - Business related public data</option>
+							<option value="3">Moderate - Business and intellectual properties</option>
+							<option value="4">High - All customer related data </option>
+							<option value="5">Top Secret - Information protected by contract, statute or regulation</option>								
+						</select>
+					</div>					
+				</fieldset> 
+					<div class="form-group">
+						<label for="I_BusTerm_bus_desc">Business Description:</label>
+						<textarea class="form-control" rows="5" id="I_BusTerm_bus_desc" required></textarea>
+					</div>
+				</fieldset>
+				</div>
+				<div class="col-md-6">
+				<fieldset><legend>Ownership</legend>
+					<div class="form-group">
+						<label for="I_BusTerm_Analyst">Business Analyst</label>
+						<input type="text" class="form-control" id="I_BusTerm_Analyst" data-toggle="tooltip" title="Name of the analyst">
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_Owner">Business owner</label>
+						<input type="text" class="form-control" id="I_BusTerm_Owner" data-toggle="tooltip" title="Business owner of the term">
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_Project">Project/Department</label>
+						<input type="text" class="form-control" id="I_BusTerm_Project" data-toggle="tooltip" title="Project or department responsible for business term">
+					</div><hr>
+				</fieldset>
+				<fieldset><legend>Data Definition</legend>
+					<div class="form-group">
+						<label for="I_BusTerm_datatype">Standard Data Type:</label>
+						<select class="form-control" id="I_BusTerm_datatype" required data-toggle="tooltip" title="Standard data type used for column, where business term is stored"></select>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_default">Default Value:</label>
+						<input type="text" class="form-control" id="I_BusTerm_default" data-toggle="tooltip" title="Default value for the column, where term is stored"></input>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_mask">Mask:</label>
+						<select class="form-control" id="I_BusTerm_mask" data-toggle="tooltip" title="Data Mask">
+							<option value="1">Text:(A-Za-z)+</option>
+							<option value="2">Text:[A-Z](a-z)+</option>
+							<option value="3">Text:(A-Z a-z)+</option>
+							<option value="4">Text:(A-Z a-z0-9)+</option>
+							<option value="5">Text:(0-9)+</option>
+							<option value="6">Text:(0-9)+(.)?(0-9)+</option>
+							<option value="7">Text:(A-Za-z)+@(A-Za-z)+.(a-z){,2}</option>
+							<option value="8">Text:(1-9)(0-9)+</option>
+							<option value="9">Text:[A-Z]+</option>
+							<option value="10">Text:[a-z]+</option>
+							<option value="11">Text:[A-Za-z]</option>
+							<option value="12">Date:DD.MM.YYYY</option>
+							<option value="13">Date:DD.MM.YYYY HH24:MI:SS</option>
+						</select>						
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_mask_desc">Mask Description:</label>
+						<textarea  class="form-control" id="I_BusTerm_mask_desc" data-toggle="tooltip" title="Business definition of the data pattern"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="I_BusTerm_example">Data Example:</label>
+						<textarea  class="form-control" rows="5"  id="I_BusTerm_example" data-toggle="tooltip" title="Coma sepparated example values"></textarea>
+					</div>
+				</fieldset>
+				</div>	
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-light" data-dismiss="modal">Close</button>	
+				<button type="button" class="btn btn btn-secondary" id="B_BusTermDelete" data-dismiss="modal">Delete</button>	
+				<button type="button" class="btn btn btn-primary" id="B_BusTermSave" data-dismiss="modal">Save</button>					
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="dropdown-menu dropdown-menu-sm " id="context-menu">
+	<a class="dropdown-item text-primary" href="#" id="GotoAddEdge">Add FK</a>
+	<a class="dropdown-item text-primary" href="#" id="GotoAddNode">Add Table</a>
+	
+	<a class="dropdown-item text-secondary" href="#" id="GotoFit2">Fit</a>
+	<a class="dropdown-item text-secondary d-none" href="#" id="GotoRedraw">Redraw</a>
+	<div class="dropdown-item input-group input-group-sm d-none">
+		<div class="input-group">
+		  <input type="text" class="form-control" placeholder="Search" aria-label="Username" aria-describedby="I_Go" id="I_Go_Text">
+		  <div class="input-group-prepend">
+			<span class="btn btn-sm btn-primary " id="I_Go">Go</span>
+		  </div>
+		</div>
+	</div>
+	</div>
+</div>
+	
+<div class="dropdown-menu dropdown-menu-sm" id="context-menu-node">
+ 	<a class="dropdown-item " href="#" id="GotoDeleteNode">Delete</a>	
+</div>
+	
+<div class="dropdown-menu dropdown-menu-sm" id="context-menu-edge">
+	<a class="dropdown-item" href="#" id="GotoDeleteEdge">Delete</a>	
+</div>
+ 
+</body>
+</html>
