@@ -8,7 +8,7 @@ Standalone web browser data modeler. Whole diagram is created only in your brows
   - **Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)**
   - **Record business change log**
 
-
+<br><br>
 
 ![Screenshot](https://github.com/pj1985/dm_lite/blob/master/screen.png "Data Modeler Lite")
 
