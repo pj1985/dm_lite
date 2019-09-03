@@ -1,7 +1,31 @@
 # DM Lite
-Web browser data modeler
+Standalone web browser data modeler. Whole diagram is created only in your browser, no data is stored on server. You can save your work by exporting diagram into file and open later through import diagram function.
+
+## Main functions of data modeler:
+  - ### Create relational data model (tables and foreign keys)
+  - ### Use logical predefined stereotypes and domain data types for modeling
+  - ### Manage business dictionary with mapping to table columns
+  - ### Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)
+  - ### Record business change log
+
+You can integrate data modeler with your database (for example with PHP) to create powerfull modeling tool.
 
 ![Screenshot](https://github.com/pj1985/dm_lite/blob/master/screen.png "Data Modeler Lite")
+
+# Description
+
+- **css/boot.css** - bootstrap 4.3 css file
+- **js/bus_terms.js** - default business terms used in model
+- **js/constypes.js** - constraint types
+- **js/datatypes.js** - data types used in model
+- **js/demo_DM.js** - demo data model
+- **js/dm.js** - core javascript code
+- **js/options.js** - diagram physics options<!DOCTYPE HTML>
+ 
+ - **js/stereotypes.js** - stereotypes used in model
+
+- **sql** - database scripts for generating model file
+
 
 # Support
 Support available via GitHub Issues. 
