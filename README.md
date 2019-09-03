@@ -1,6 +1,8 @@
 # DM Lite
 Standalone web browser data modeler. Whole diagram is created only in your browser, no data is stored on server. You can save your work by exporting diagram into file and open later through import diagram function.
 
+You can integrate data modeler with your database (for example with PHP) to create powerful modeling tool with model metadata management (business terms, business data definitions,..).
+
 ## Main functions of data modeler:
   - **Create relational data model (tables and foreign keys)**
   - **Use logical predefined stereotypes and domain data types for modeling**
@@ -25,8 +27,6 @@ Standalone web browser data modeler. Whole diagram is created only in your brows
  - **js/stereotypes.js** - stereotypes used in model
 
 - **sql** - database scripts for generating model file
-
-You can integrate data modeler with your database (for example with PHP) to create powerfull modeling tool.
 
 # Support
 Support available via GitHub Issues. 
