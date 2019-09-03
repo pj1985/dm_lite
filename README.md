@@ -1,2 +1,2 @@
-# dm_lite
+# DM Lite
 Web browser data modeler
