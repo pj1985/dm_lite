@@ -5,7 +5,7 @@ You can integrate data modeler with your database (for example with PHP) to crea
 
 ## Main functions of data modeler:
   - **Create relational data model (tables and foreign keys)**
-  - **Use logical predefined stereotypes and domain data types for modeling**
+  - **Use predefined stereotypes and domain data types for modeling**
   - **Manage business dictionary with mapping to table columns**
   - **Manage advanced metadata for data model (data sizing, data statistics, data sensitivity..)**
   - **Record business change log**
